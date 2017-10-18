@@ -1,0 +1,13 @@
+sudo: required
+dist: trusty
+
+language: haxe
+
+# Build the project
+script:
+  - haxe geometrize-s3-bucket-downloader.hxml release.hxml
+
+# Deploy the generated site to the Geometrize S3 buckets
+deploy:
+# TODO
+  -

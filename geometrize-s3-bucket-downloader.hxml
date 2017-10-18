@@ -1,0 +1,4 @@
+-main Main
+
+# Enable full dead code elimination
+-dce full
