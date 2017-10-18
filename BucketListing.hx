@@ -8,6 +8,7 @@ import js.html.ButtonElement;
 import js.html.DivElement;
 import js.html.TableCellElement;
 import js.html.TableRowElement;
+import js.html.Element;
 
 // Represents metadata listing info for a file in an S3 bucket
 typedef S3File = {
@@ -54,6 +55,11 @@ class BucketListing {
 		this.listingTableContainer = listingTableContainer;
 		this.loadingSpinner = loadingSpinner;
 		this.refreshButton = refreshButton;
+		
+		this.refreshButton.onclick = function() {
+			// Try to request the data again if the retry button is pressed (retry button is implicitly hidden)
+			requestData();
+		};
 	}
 	
 	/**
@@ -79,6 +85,9 @@ class BucketListing {
 			var table:DivElement = generateListingTable(info);
 			listingTableContainer.innerHTML = '';
 			listingTableContainer.appendChild(table);
+			
+			// Make the newly generated table sortable
+			Sortable.init();
 			
 			loadingSpinner.className = "";
 			listingTableContainer.style.display = "";
@@ -183,17 +192,22 @@ class BucketListing {
 			var row:TableRowElement = Browser.document.createTableRowElement();
 			header.appendChild(row);
 			
-			var nameCell:TableCellElement = Browser.document.createTableCellElement();
+			var nameCell:Element = cast Browser.document.createElement("th");
+			nameCell.setAttribute("data-sorted", "true");
+			nameCell.setAttribute("data-sorted-direction", "descending");
+			nameCell.setAttribute("data-sortable-type", "alpha");
 			nameCell.textContent = "Name";
 			
-			var modifiedCell:TableCellElement = Browser.document.createTableCellElement();
-			modifiedCell.textContent = "Modified";
+			var modifiedDateCell:Element = cast Browser.document.createElement("th");
+			modifiedDateCell.setAttribute("data-sortable-type", "date");
+			modifiedDateCell.textContent = "Modified";
 			
-			var sizeCell:TableCellElement = Browser.document.createTableCellElement();
+			var sizeCell:Element = cast Browser.document.createElement("th");
+			sizeCell.setAttribute("data-sortable-type", "numeric");
 			sizeCell.textContent = "Size";
 			
 			row.appendChild(nameCell);
-			row.appendChild(modifiedCell);
+			row.appendChild(modifiedDateCell);
 			row.appendChild(sizeCell);
 			
 			return header;
@@ -209,14 +223,14 @@ class BucketListing {
 			fileLink.textContent = file.fileName;
 			nameCell.appendChild(fileLink);
 			
-			var modifiedCell:TableCellElement = Browser.document.createTableCellElement();
-			modifiedCell.textContent = file.lastModified;
+			var modifiedDateCell:TableCellElement = Browser.document.createTableCellElement();
+			modifiedDateCell.textContent = file.lastModified;
 			
 			var sizeCell:TableCellElement = Browser.document.createTableCellElement();
 			sizeCell.textContent = file.size;
 			
 			row.appendChild(nameCell);
-			row.appendChild(modifiedCell);
+			row.appendChild(modifiedDateCell);
 			row.appendChild(sizeCell);
 			
 			return row;
@@ -232,14 +246,14 @@ class BucketListing {
 			dirLink.textContent = dir.prefix;
 			nameCell.appendChild(dirLink);
 			
-			var modifiedCell:TableCellElement = Browser.document.createTableCellElement();
-			modifiedCell.textContent = "-";
+			var modifiedDateCell:TableCellElement = Browser.document.createTableCellElement();
+			modifiedDateCell.textContent = "-";
 			
 			var sizeCell:TableCellElement = Browser.document.createTableCellElement();
 			sizeCell.textContent = "-";
 			
 			row.appendChild(nameCell);
-			row.appendChild(modifiedCell);
+			row.appendChild(modifiedDateCell);
 			row.appendChild(sizeCell);
 			
 			return row;
@@ -248,6 +262,8 @@ class BucketListing {
 		// Create the table, put it in a container, and populate it
 		var container = Browser.document.createDivElement();
 		var table = Browser.document.createTableElement();
+		table.setAttribute("data-sortable", "");
+		
 		var tableBody = Browser.document.createElement("tbody");
 		
 		table.appendChild(tableBody);

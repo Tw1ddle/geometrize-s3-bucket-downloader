@@ -25,11 +25,15 @@ DirectoryInfo.prototype = {
 	__class__: DirectoryInfo
 };
 var BucketListing = function(config,navigationContainer,listingTableContainer,loadingSpinner,refreshButton) {
+	var _gthis = this;
 	this.config = config;
 	this.navigationContainer = navigationContainer;
 	this.listingTableContainer = listingTableContainer;
 	this.loadingSpinner = loadingSpinner;
 	this.refreshButton = refreshButton;
+	this.refreshButton.onclick = function() {
+		_gthis.requestData();
+	};
 };
 BucketListing.__name__ = ["BucketListing"];
 BucketListing.prototype = {
@@ -49,6 +53,7 @@ BucketListing.prototype = {
 			var table = _gthis.generateListingTable(info);
 			_gthis.listingTableContainer.innerHTML = "";
 			_gthis.listingTableContainer.appendChild(table);
+			Sortable.init();
 			_gthis.loadingSpinner.className = "";
 			_gthis.listingTableContainer.style.display = "";
 		};
@@ -142,14 +147,19 @@ BucketListing.prototype = {
 			var header = window.document.createElement("thead");
 			var row = window.document.createElement("tr");
 			header.appendChild(row);
-			var nameCell = window.document.createElement("td");
+			var nameCell = window.document.createElement("th");
+			nameCell.setAttribute("data-sorted","true");
+			nameCell.setAttribute("data-sorted-direction","descending");
+			nameCell.setAttribute("data-sortable-type","alpha");
 			nameCell.textContent = "Name";
-			var modifiedCell = window.document.createElement("td");
-			modifiedCell.textContent = "Modified";
-			var sizeCell = window.document.createElement("td");
+			var modifiedDateCell = window.document.createElement("th");
+			modifiedDateCell.setAttribute("data-sortable-type","date");
+			modifiedDateCell.textContent = "Modified";
+			var sizeCell = window.document.createElement("th");
+			sizeCell.setAttribute("data-sortable-type","numeric");
 			sizeCell.textContent = "Size";
 			row.appendChild(nameCell);
-			row.appendChild(modifiedCell);
+			row.appendChild(modifiedDateCell);
 			row.appendChild(sizeCell);
 			return header;
 		};
@@ -160,12 +170,12 @@ BucketListing.prototype = {
 			fileLink.href = window.location.protocol + "//" + window.location.hostname + window.location.pathname + "?prefix=" + file.fileName;
 			fileLink.textContent = file.fileName;
 			nameCell1.appendChild(fileLink);
-			var modifiedCell1 = window.document.createElement("td");
-			modifiedCell1.textContent = file.lastModified;
+			var modifiedDateCell1 = window.document.createElement("td");
+			modifiedDateCell1.textContent = file.lastModified;
 			var sizeCell1 = window.document.createElement("td");
 			sizeCell1.textContent = file.size;
 			row1.appendChild(nameCell1);
-			row1.appendChild(modifiedCell1);
+			row1.appendChild(modifiedDateCell1);
 			row1.appendChild(sizeCell1);
 			return row1;
 		};
@@ -176,17 +186,18 @@ BucketListing.prototype = {
 			dirLink.href = "TODO";
 			dirLink.textContent = dir.prefix;
 			nameCell2.appendChild(dirLink);
-			var modifiedCell2 = window.document.createElement("td");
-			modifiedCell2.textContent = "-";
+			var modifiedDateCell2 = window.document.createElement("td");
+			modifiedDateCell2.textContent = "-";
 			var sizeCell2 = window.document.createElement("td");
 			sizeCell2.textContent = "-";
 			row2.appendChild(nameCell2);
-			row2.appendChild(modifiedCell2);
+			row2.appendChild(modifiedDateCell2);
 			row2.appendChild(sizeCell2);
 			return row2;
 		};
 		var container = window.document.createElement("div");
 		var table = window.document.createElement("table");
+		table.setAttribute("data-sortable","");
 		var tableBody = window.document.createElement("tbody");
 		table.appendChild(tableBody);
 		container.appendChild(table);
