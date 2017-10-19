@@ -38,6 +38,6 @@ class Main {
 	}
 
 	private inline function init():Void {
-		bucket.requestData();
+		bucket.requestData(bucket.getQueryUrlForRootDirectory());
 	}
 }

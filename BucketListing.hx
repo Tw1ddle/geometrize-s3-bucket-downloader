@@ -6,9 +6,9 @@ import js.Browser;
 import js.html.AnchorElement;
 import js.html.ButtonElement;
 import js.html.DivElement;
+import js.html.Element;
 import js.html.TableCellElement;
 import js.html.TableRowElement;
-import js.html.Element;
 
 // Represents metadata listing info for a file in an S3 bucket
 typedef S3File = {
@@ -58,20 +58,18 @@ class BucketListing {
 		
 		this.refreshButton.onclick = function() {
 			// Request the data again if the retry button gets pressed (retry button is hidden once this happens)
-			requestData();
+			requestData(getQueryUrlForRootDirectory()); // NOTE should really retry current directory not the base directory
 		};
 	}
 	
 	/**
 	 * Requests the directory listing data from Amazon S3 and manages the UI while it waits for a response.
 	 */
-	public function requestData():Void {
+	public function requestData(bucketRequestUrl:String):Void {
 		// Make things look busy
 		loadingSpinner.className = "spinner";
 		listingTableContainer.style.display = "none";
 		refreshButton.style.display = "none";
-		
-		var url:String = buildQueryUrl();
 		
 		var onGetFailed = function(errorMessage:String) {
 			// Failed to fetch listing - so show the retry button and hide the rest
@@ -81,7 +79,7 @@ class BucketListing {
 			listingTableContainer.style.display = "none";
 		}
 
-		var http = new Http(url);
+		var http = new Http(bucketRequestUrl);
 		http.onData = function(data:String) {
 			if (data == null || data.length == 0) {
 				onGetFailed("Query failed, no data received. Click to retry...");
@@ -109,11 +107,75 @@ class BucketListing {
 			// Could make further requests using continuation request and grow the table more (ignoring this for the time being)
 		};
 		http.onError = function(error:String) {
-			onGetFailed("Query failed, received error:" + error);
+			onGetFailed("Query failed, encountered error:" + error);
 		};
 		http.onStatus = function (status:Int) {
 		}
 		http.request(false);
+	}
+	
+	/**
+	 * Builds the Amazon S3 GET Bucket (List Objects) Version 2 query URL, based on the root of the bucket.
+	 * @return A query URL for a GET operation, which can be used to request an XML response describing some or all of the objects in a bucket.
+	 */
+	public function getQueryUrlForRootDirectory():String {
+		var baseUrl = config.BUCKET_URL + '?list-type=2' + '&delimiter=/';
+		return baseUrl;
+	}
+	
+	/**
+	 * Builds the Amazon S3 GET Bucket (List Objects) Version 2 query URL for the given directory in the bucket.
+	 * @param directoryPath The directory within the bucket to create the query URL for e.g. "windows/". Must end with a forward slash.
+	 * @return A query URL for a GET operation, which can be used to request an XML response describing some or all of the objects in a bucket.
+	 */
+	private function getQueryUrlForDirectory(directoryPath:String):String {
+		var url = getQueryUrlForRootDirectory();
+		if (directoryPath.length == 0) {
+			return url;
+		}
+		
+		url += '&prefix=' + StringTools.urlEncode(directoryPath);
+		return url;
+	}
+	
+	/**
+	 * Makes a link that downloads the given file when clicked.
+	 * @param text The text to show on the link.
+	 * @param filePath The path to the file.
+	 * @return The new link element.
+	 */
+	private function makeAnchorLinkForFile(text:String, filePath:String):AnchorElement {
+		var anchor = Browser.document.createAnchorElement();
+		anchor.innerText = text;
+		anchor.href = config.BUCKET_URL + filePath;
+		return anchor;
+	}
+	
+	/**
+	 * Makes a button that navigates to the given directory when clicked.
+	 * @param text The text to show on the button.
+	 * @param directoryPath The path to the directory, must end with a "/".
+	 * @return The new button element.
+	 */
+	private function makeButtonForDirectory(text:String, directoryPath:String):ButtonElement {
+		var button = Browser.document.createButtonElement();
+		button.innerText = text;
+		button.onclick = function() {
+			requestData(getQueryUrlForDirectory(directoryPath));
+		}
+		return button;
+	}
+	
+	/**
+	 * Builds the Amazon S3 href for a file within the bucket (for download-on-click type behavior).
+	 * @param directoryPath The directory within the bucket to create the query URL for e.g. "windows/". Must end with a forward slash.
+	 * @param fileName The name of the file within the directory.
+	 * @return A URL pointing to the file in the bucket.
+	 * @return A URL pointing to the file in the bucket.
+	 */
+	private function getUrlForFile(directoryPath:String, fileName:String):String {
+		var url = getQueryUrlForDirectory(directoryPath);
+		return url; // TODO get regular file link
 	}
 	
 	/**
@@ -162,44 +224,37 @@ class BucketListing {
 	}
 	
 	/**
-	 * Builds the Amazon S3 GET Bucket (List Objects) Version 2 query URL, based on the current location being browsed in the bucket.
-	 * @return A query URL for a GET operation, which can be used to request an XML response describing some or all of the objects in a bucket.
-	 */
-	private function buildQueryUrl():String {
-		var url = config.BUCKET_URL + '?list-type=2&delimiter=/';
-		// TODO
-		return url;
-	}
-	
-	/**
-	 * Constructs a navigation element in style of classic server/file browser i.e: "root -> subfolder -> subsubfolder" with hyperlinks.
+	 * Constructs a navigation element in style of classic server/file browser i.e: "root >> subfolder >> subsubfolder" with hyperlinks.
 	 * @param info The directory listing info to use.
 	 * @return An element containing a navigation element containing a chain of links that simplifies bucket navigation.
 	 */
 	private function buildNavigation(info:DirectoryInfo):DivElement {
+		var prefix = info.prefix;
+		
 		var navigation = Browser.document.createDivElement();
 		
-		var prefix = info.prefix;
-		var p = Browser.document.createParagraphElement();
-		
-		var parts:Array<String> = prefix.split("/");
-		
-		var paragraphText:String = config.BUCKET_NAME + " > ";
-		var i = 0;
-		while (i < parts.length) {
-			var anchor = Browser.document.createAnchorElement();
-			anchor.href = "TODO";
-			anchor.innerText = parts[i];
-			paragraphText += anchor;
-			
-			if(i != parts.length - 1) {
-				paragraphText += " > ";
-			}
-			i++;
+		var addButton = function(text:String, directoryPath:String):Void {
+			var button = makeButtonForDirectory(text, directoryPath);
+			navigation.appendChild(button);
 		}
-		p.innerHTML = paragraphText;
 		
-		navigation.appendChild(p);
+		var parts:Array<String> = prefix.length == 0 ? [""] : prefix.split("/");
+		
+		addButton("root", "");
+		
+		var partsChain:String = "";
+		var i = 0;
+		while (i < parts.length - 1) {
+			partsChain += parts[i] + "/";
+			
+			addButton(parts[i], partsChain);
+			
+			i++;
+			if (i < parts.length - 1) {
+				//navigationContent += " >> ";
+			}
+		}
+		
 		return navigation;
 	}
 	
@@ -256,9 +311,7 @@ class BucketListing {
 			var nameCell:TableCellElement = Browser.document.createTableCellElement();
 			nameCell.className = "bucket_listing_file_name_cell";
 			
-			var fileLink:AnchorElement = Browser.document.createAnchorElement();
-			fileLink.href = Browser.location.protocol + '//' + Browser.location.hostname + Browser.location.pathname + "?prefix=" + file.fileName;
-			fileLink.textContent = file.fileName;
+			var fileLink:AnchorElement = makeAnchorLinkForFile(file.fileName, file.fileName);
 			nameCell.appendChild(fileLink);
 			
 			var modifiedDateCell:TableCellElement = Browser.document.createTableCellElement();
@@ -288,9 +341,7 @@ class BucketListing {
 			var nameCell:TableCellElement = Browser.document.createTableCellElement();
 			nameCell.className = "bucket_listing_dir_name_cell";
 			
-			var dirLink:AnchorElement = Browser.document.createAnchorElement();
-			dirLink.href = "TODO";
-			dirLink.textContent = dir.prefix;
+			var dirLink:ButtonElement = makeButtonForDirectory(dir.prefix, dir.prefix);
 			nameCell.appendChild(dirLink);
 			
 			var modifiedDateCell:TableCellElement = Browser.document.createTableCellElement();
@@ -307,7 +358,7 @@ class BucketListing {
 			row.appendChild(sizeCell);
 			
 			return row;
-		}
+		};
 		
 		// Create the table, put it in a container, and populate it
 		var container = Browser.document.createDivElement();
