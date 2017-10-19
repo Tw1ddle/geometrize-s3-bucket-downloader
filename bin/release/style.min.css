@@ -149,3 +149,8 @@ table th, table td {
     line-height: 1.6em;
     text-align: left;
 }
+
+.bucket_listing_item_icon_header_cell, .bucket_listing_file_icon_cell, .bucket_listing_dir_icon_cell {
+    width: 16px;
+    height: 16px;
+}

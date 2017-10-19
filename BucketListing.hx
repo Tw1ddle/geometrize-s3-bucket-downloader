@@ -218,20 +218,24 @@ class BucketListing {
 			var iconTypeCell:Element = cast Browser.document.createElement("th");
 			iconTypeCell.setAttribute("data-sortable", "false");
 			iconTypeCell.textContent = "";
+			iconTypeCell.className = "bucket_listing_item_icon_header_cell";
 			
 			var nameCell:Element = cast Browser.document.createElement("th");
 			nameCell.setAttribute("data-sorted", "true");
 			nameCell.setAttribute("data-sorted-direction", "descending");
 			nameCell.setAttribute("data-sortable-type", "alpha");
 			nameCell.textContent = "Name";
+			nameCell.className = "bucket_listing_item_name_header_cell";
 			
 			var modifiedDateCell:Element = cast Browser.document.createElement("th");
 			modifiedDateCell.setAttribute("data-sortable-type", "date");
 			modifiedDateCell.textContent = "Modified";
+			modifiedDateCell.className = "bucket_listing_item_modified_date_header_cell";
 			
 			var sizeCell:Element = cast Browser.document.createElement("th");
 			sizeCell.setAttribute("data-sortable-type", "numeric");
 			sizeCell.textContent = "Size";
+			sizeCell.className = "bucket_listing_item_size_header_cell";
 			
 			row.appendChild(iconTypeCell);
 			row.appendChild(nameCell);
@@ -247,8 +251,11 @@ class BucketListing {
 			
 			var iconTypeCell:TableCellElement = Browser.document.createTableCellElement();
 			iconTypeCell.innerText = "🖹";
+			iconTypeCell.className = "bucket_listing_file_icon_cell";
 			
 			var nameCell:TableCellElement = Browser.document.createTableCellElement();
+			nameCell.className = "bucket_listing_file_name_cell";
+			
 			var fileLink:AnchorElement = Browser.document.createAnchorElement();
 			fileLink.href = Browser.location.protocol + '//' + Browser.location.hostname + Browser.location.pathname + "?prefix=" + file.fileName;
 			fileLink.textContent = file.fileName;
@@ -256,9 +263,11 @@ class BucketListing {
 			
 			var modifiedDateCell:TableCellElement = Browser.document.createTableCellElement();
 			modifiedDateCell.textContent = file.lastModified;
+			modifiedDateCell.className = "bucket_listing_file_modified_date_cell";
 			
 			var sizeCell:TableCellElement = Browser.document.createTableCellElement();
 			sizeCell.textContent = Util.formatBytes(Std.parseFloat(file.size), 2);
+			sizeCell.className = "bucket_listing_file_size_cell";
 			
 			row.appendChild(iconTypeCell);
 			row.appendChild(nameCell);
@@ -274,8 +283,11 @@ class BucketListing {
 			
 			var iconTypeCell:TableCellElement = Browser.document.createTableCellElement();
 			iconTypeCell.innerText = "📁";
+			iconTypeCell.className = "bucket_listing_dir_icon_cell";
 			
 			var nameCell:TableCellElement = Browser.document.createTableCellElement();
+			nameCell.className = "bucket_listing_dir_name_cell";
+			
 			var dirLink:AnchorElement = Browser.document.createAnchorElement();
 			dirLink.href = "TODO";
 			dirLink.textContent = dir.prefix;
@@ -283,9 +295,11 @@ class BucketListing {
 			
 			var modifiedDateCell:TableCellElement = Browser.document.createTableCellElement();
 			modifiedDateCell.textContent = "-";
+			modifiedDateCell.className = "bucket_listing_dir_modified_date_cell";
 			
 			var sizeCell:TableCellElement = Browser.document.createTableCellElement();
 			sizeCell.textContent = "-";
+			sizeCell.className = "bucket_listing_dir_size_cell";
 			
 			row.appendChild(iconTypeCell);
 			row.appendChild(nameCell);
@@ -297,10 +311,14 @@ class BucketListing {
 		
 		// Create the table, put it in a container, and populate it
 		var container = Browser.document.createDivElement();
+		container.className = "bucket_listing_table_container";
+		
 		var table = Browser.document.createTableElement();
 		table.setAttribute("data-sortable", "");
+		table.className = "bucket_listing_table";
 		
 		var tableBody = Browser.document.createElement("tbody");
+		tableBody.className = "bucket_listing_table_body";
 		
 		table.appendChild(tableBody);
 		container.appendChild(table);
