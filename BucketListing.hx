@@ -72,9 +72,22 @@ class BucketListing {
 		refreshButton.style.display = "none";
 		
 		var url:String = buildQueryUrl();
+		
+		var onGetFailed = function(errorMessage:String) {
+			// Failed to fetch listing - so show the retry button and hide the rest
+			refreshButton.style.display = "";
+			refreshButton.innerText = errorMessage;
+			loadingSpinner.className = "";
+			listingTableContainer.style.display = "none";
+		}
 
 		var http = new Http(url);
 		http.onData = function(data:String) {
+			if (data == null || data.length == 0) {
+				onGetFailed("Query failed, no data received. Click to retry...");
+				return;
+			}
+			
 			var xml:Xml = Parser.parse(data);
 			var info = getInfoFromS3ListingData(xml);
 			
@@ -96,11 +109,10 @@ class BucketListing {
 			// Could make further requests using continuation request and grow the table more (ignoring this for the time being)
 		};
 		http.onError = function(error:String) {
-			// Failed to fetch listing - so show the retry button and hide the rest
-			refreshButton.style.display = "";
-			loadingSpinner.className = "";
-			listingTableContainer.style.display = "none";
+			onGetFailed("Query failed, received error:" + error);
 		};
+		http.onStatus = function (status:Int) {
+		}
 		http.request(false);
 	}
 	

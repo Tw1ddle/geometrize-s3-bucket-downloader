@@ -44,8 +44,18 @@ BucketListing.prototype = {
 		this.listingTableContainer.style.display = "none";
 		this.refreshButton.style.display = "none";
 		var url = this.buildQueryUrl();
+		var onGetFailed = function(errorMessage) {
+			_gthis.refreshButton.style.display = "";
+			_gthis.refreshButton.innerText = errorMessage;
+			_gthis.loadingSpinner.className = "";
+			_gthis.listingTableContainer.style.display = "none";
+		};
 		var http = new haxe_Http(url);
 		http.onData = function(data) {
+			if(data == null || data.length == 0) {
+				onGetFailed("Query failed, no data received. Click to retry...");
+				return;
+			}
 			var xml = haxe_xml_Parser.parse(data);
 			var info = _gthis.getInfoFromS3ListingData(xml);
 			var nav = _gthis.buildNavigation(info);
@@ -59,9 +69,9 @@ BucketListing.prototype = {
 			_gthis.listingTableContainer.style.display = "";
 		};
 		http.onError = function(error) {
-			_gthis.refreshButton.style.display = "";
-			_gthis.loadingSpinner.className = "";
-			_gthis.listingTableContainer.style.display = "none";
+			onGetFailed("Query failed, received error:" + error);
+		};
+		http.onStatus = function(status) {
 		};
 		http.request(false);
 	}
