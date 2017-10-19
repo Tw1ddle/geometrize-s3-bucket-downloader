@@ -8,7 +8,8 @@ function $extend(from, fields) {
 }
 var BucketConfig = function() {
 	this.EXCLUDE_DIRECTORIES = [];
-	this.EXCLUDE_FILES = ["index.html","geometrize-s3-bucket-downloader.js"];
+	this.EXCLUDE_FILES = ["index.html","geometrize-s3-bucket-downloader.js","style.min.css","sortable.min.js"];
+	this.BUCKET_NAME = "geometrize-installer-bucket";
 	this.BUCKET_URL = "https://geometrize-installer-bucket.s3.amazonaws.com/";
 };
 BucketConfig.__name__ = ["BucketConfig"];
@@ -63,10 +64,6 @@ BucketListing.prototype = {
 			_gthis.listingTableContainer.style.display = "none";
 		};
 		http.request(false);
-	}
-	,buildQueryUrl: function() {
-		var url = this.config.BUCKET_URL + "?list-type=2&delimiter=/";
-		return url;
 	}
 	,getInfoFromS3ListingData: function(xml) {
 		var files = [];
@@ -136,10 +133,29 @@ BucketListing.prototype = {
 		}
 		return new DirectoryInfo(prefix,files,dirs);
 	}
+	,buildQueryUrl: function() {
+		var url = this.config.BUCKET_URL + "?list-type=2&delimiter=/";
+		return url;
+	}
 	,buildNavigation: function(info) {
 		var navigation = window.document.createElement("div");
 		var prefix = info.prefix;
-		var tmp = prefix.length != 0;
+		var p = window.document.createElement("p");
+		var parts = prefix.split("/");
+		var paragraphText = this.config.BUCKET_NAME + " > ";
+		var i = 0;
+		while(i < parts.length) {
+			var anchor = window.document.createElement("a");
+			anchor.href = "TODO";
+			anchor.innerText = parts[i];
+			paragraphText += Std.string(anchor);
+			if(i != parts.length - 1) {
+				paragraphText += " > ";
+			}
+			++i;
+		}
+		p.innerHTML = paragraphText;
+		navigation.appendChild(p);
 		return navigation;
 	}
 	,generateListingTable: function(info) {
@@ -147,6 +163,9 @@ BucketListing.prototype = {
 			var header = window.document.createElement("thead");
 			var row = window.document.createElement("tr");
 			header.appendChild(row);
+			var iconTypeCell = window.document.createElement("th");
+			iconTypeCell.setAttribute("data-sortable","false");
+			iconTypeCell.textContent = "";
 			var nameCell = window.document.createElement("th");
 			nameCell.setAttribute("data-sorted","true");
 			nameCell.setAttribute("data-sorted-direction","descending");
@@ -158,6 +177,7 @@ BucketListing.prototype = {
 			var sizeCell = window.document.createElement("th");
 			sizeCell.setAttribute("data-sortable-type","numeric");
 			sizeCell.textContent = "Size";
+			row.appendChild(iconTypeCell);
 			row.appendChild(nameCell);
 			row.appendChild(modifiedDateCell);
 			row.appendChild(sizeCell);
@@ -165,6 +185,8 @@ BucketListing.prototype = {
 		};
 		var makeRowForFile = function(file) {
 			var row1 = window.document.createElement("tr");
+			var iconTypeCell1 = window.document.createElement("td");
+			iconTypeCell1.innerText = "🖹";
 			var nameCell1 = window.document.createElement("td");
 			var fileLink = window.document.createElement("a");
 			fileLink.href = window.location.protocol + "//" + window.location.hostname + window.location.pathname + "?prefix=" + file.fileName;
@@ -173,7 +195,8 @@ BucketListing.prototype = {
 			var modifiedDateCell1 = window.document.createElement("td");
 			modifiedDateCell1.textContent = file.lastModified;
 			var sizeCell1 = window.document.createElement("td");
-			sizeCell1.textContent = file.size;
+			sizeCell1.textContent = Util.formatBytes(parseFloat(file.size),2);
+			row1.appendChild(iconTypeCell1);
 			row1.appendChild(nameCell1);
 			row1.appendChild(modifiedDateCell1);
 			row1.appendChild(sizeCell1);
@@ -181,6 +204,8 @@ BucketListing.prototype = {
 		};
 		var makeRowForDir = function(dir) {
 			var row2 = window.document.createElement("tr");
+			var iconTypeCell2 = window.document.createElement("td");
+			iconTypeCell2.innerText = "📁";
 			var nameCell2 = window.document.createElement("td");
 			var dirLink = window.document.createElement("a");
 			dirLink.href = "TODO";
@@ -190,6 +215,7 @@ BucketListing.prototype = {
 			modifiedDateCell2.textContent = "-";
 			var sizeCell2 = window.document.createElement("td");
 			sizeCell2.textContent = "-";
+			row2.appendChild(iconTypeCell2);
 			row2.appendChild(nameCell2);
 			row2.appendChild(modifiedDateCell2);
 			row2.appendChild(sizeCell2);
@@ -374,6 +400,30 @@ Type.getClassName = function(c) {
 		return null;
 	}
 	return a.join(".");
+};
+var Util = function() { };
+Util.__name__ = ["Util"];
+Util.formatBytes = function(bytes,decimals) {
+	if(bytes == 0) {
+		return "0 Bytes";
+	}
+	var k = 1024;
+	var sizes = ["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"];
+	var i = Math.floor(Math.log(bytes) / Math.log(k));
+	return Std.string(Util.floatToStringPrecision(bytes / Math.pow(k,i),decimals)) + " " + sizes[i];
+};
+Util.floatToStringPrecision = function(n,prec) {
+	n = Math.round(n * Math.pow(10,prec));
+	var str = "" + n;
+	var len = str.length;
+	if(len <= prec) {
+		while(len < prec) {
+			str = "0" + str;
+			++len;
+		}
+		return "0." + str;
+	}
+	return HxOverrides.substr(str,0,str.length - prec) + "." + HxOverrides.substr(str,str.length - prec,null);
 };
 var Xml = function(nodeType) {
 	this.nodeType = nodeType;

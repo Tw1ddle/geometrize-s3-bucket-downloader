@@ -57,7 +57,7 @@ class BucketListing {
 		this.refreshButton = refreshButton;
 		
 		this.refreshButton.onclick = function() {
-			// Try to request the data again if the retry button is pressed (retry button is implicitly hidden)
+			// Request the data again if the retry button gets pressed (retry button is hidden once this happens)
 			requestData();
 		};
 	}
@@ -86,14 +86,14 @@ class BucketListing {
 			listingTableContainer.innerHTML = '';
 			listingTableContainer.appendChild(table);
 			
-			// Make the newly generated table sortable
+			// Make the newly created table sortable
 			Sortable.init();
 			
 			loadingSpinner.className = "";
 			listingTableContainer.style.display = "";
 			
 			// Note single request caps out at MaxKeys item listings (~1000)
-			// Could make further requests using continuation request and grow the table more (ignoring that for the time being)
+			// Could make further requests using continuation request and grow the table more (ignoring this for the time being)
 		};
 		http.onError = function(error:String) {
 			// Failed to fetch listing - so show the retry button and hide the rest
@@ -102,18 +102,6 @@ class BucketListing {
 			listingTableContainer.style.display = "none";
 		};
 		http.request(false);
-	}
-	
-	/**
-	 * Builds the Amazon S3 GET Bucket (List Objects) Version 2 query URL, based on the current location being browsed in the bucket.
-	 * @return A query URL for a GET operation, which can be used to request an XML response describing some or all of the objects in a bucket.
-	 */
-	private function buildQueryUrl():String {
-		var url = config.BUCKET_URL + '?list-type=2&delimiter=/';
-		
-		// TODO build based on current directory
-		
-		return url;
 	}
 	
 	/**
@@ -162,21 +150,44 @@ class BucketListing {
 	}
 	
 	/**
+	 * Builds the Amazon S3 GET Bucket (List Objects) Version 2 query URL, based on the current location being browsed in the bucket.
+	 * @return A query URL for a GET operation, which can be used to request an XML response describing some or all of the objects in a bucket.
+	 */
+	private function buildQueryUrl():String {
+		var url = config.BUCKET_URL + '?list-type=2&delimiter=/';
+		// TODO
+		return url;
+	}
+	
+	/**
 	 * Constructs a navigation element in style of classic server/file browser i.e: "root -> subfolder -> subsubfolder" with hyperlinks.
 	 * @param info The directory listing info to use.
-	 * @return An element containing a navigation element that eases bucket navigation.
+	 * @return An element containing a navigation element containing a chain of links that simplifies bucket navigation.
 	 */
 	private function buildNavigation(info:DirectoryInfo):DivElement {
 		var navigation = Browser.document.createDivElement();
 		
 		var prefix = info.prefix;
+		var p = Browser.document.createParagraphElement();
 		
-		if (prefix.length != 0) {
-			// TODO make each path segment an anchor to the corresponding part of the bucket
+		var parts:Array<String> = prefix.split("/");
+		
+		var paragraphText:String = config.BUCKET_NAME + " > ";
+		var i = 0;
+		while (i < parts.length) {
+			var anchor = Browser.document.createAnchorElement();
+			anchor.href = "TODO";
+			anchor.innerText = parts[i];
+			paragraphText += anchor;
+			
+			if(i != parts.length - 1) {
+				paragraphText += " > ";
+			}
+			i++;
 		}
+		p.innerHTML = paragraphText;
 		
-		// TODO build navigation link chain from root -> current "directory" i.e. root >> subdir >> subsubdir
-		
+		navigation.appendChild(p);
 		return navigation;
 	}
 	
@@ -192,6 +203,10 @@ class BucketListing {
 			var row:TableRowElement = Browser.document.createTableRowElement();
 			header.appendChild(row);
 			
+			var iconTypeCell:Element = cast Browser.document.createElement("th");
+			iconTypeCell.setAttribute("data-sortable", "false");
+			iconTypeCell.textContent = "";
+			
 			var nameCell:Element = cast Browser.document.createElement("th");
 			nameCell.setAttribute("data-sorted", "true");
 			nameCell.setAttribute("data-sorted-direction", "descending");
@@ -206,6 +221,7 @@ class BucketListing {
 			sizeCell.setAttribute("data-sortable-type", "numeric");
 			sizeCell.textContent = "Size";
 			
+			row.appendChild(iconTypeCell);
 			row.appendChild(nameCell);
 			row.appendChild(modifiedDateCell);
 			row.appendChild(sizeCell);
@@ -217,6 +233,9 @@ class BucketListing {
 		var makeRowForFile = function(file:S3File) {
 			var row = Browser.document.createTableRowElement();
 			
+			var iconTypeCell:TableCellElement = Browser.document.createTableCellElement();
+			iconTypeCell.innerText = "🖹";
+			
 			var nameCell:TableCellElement = Browser.document.createTableCellElement();
 			var fileLink:AnchorElement = Browser.document.createAnchorElement();
 			fileLink.href = Browser.location.protocol + '//' + Browser.location.hostname + Browser.location.pathname + "?prefix=" + file.fileName;
@@ -227,8 +246,9 @@ class BucketListing {
 			modifiedDateCell.textContent = file.lastModified;
 			
 			var sizeCell:TableCellElement = Browser.document.createTableCellElement();
-			sizeCell.textContent = file.size;
+			sizeCell.textContent = Util.formatBytes(Std.parseFloat(file.size), 2);
 			
+			row.appendChild(iconTypeCell);
 			row.appendChild(nameCell);
 			row.appendChild(modifiedDateCell);
 			row.appendChild(sizeCell);
@@ -239,6 +259,9 @@ class BucketListing {
 		// Make a row for a directory entry
 		var makeRowForDir = function(dir:S3Directory) {
 			var row = Browser.document.createTableRowElement();
+			
+			var iconTypeCell:TableCellElement = Browser.document.createTableCellElement();
+			iconTypeCell.innerText = "📁";
 			
 			var nameCell:TableCellElement = Browser.document.createTableCellElement();
 			var dirLink:AnchorElement = Browser.document.createAnchorElement();
@@ -252,6 +275,7 @@ class BucketListing {
 			var sizeCell:TableCellElement = Browser.document.createTableCellElement();
 			sizeCell.textContent = "-";
 			
+			row.appendChild(iconTypeCell);
 			row.appendChild(nameCell);
 			row.appendChild(modifiedDateCell);
 			row.appendChild(sizeCell);
