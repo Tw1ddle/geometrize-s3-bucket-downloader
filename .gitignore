@@ -1,1 +1,3 @@
 *.map
+bin/*/s3-bucket-downloader.js
+bin/*/s3-bucket-downloader.min.js
