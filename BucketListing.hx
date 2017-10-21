@@ -150,7 +150,7 @@ class BucketListing {
 	private function makeAnchorLinkForFile(text:String, filePath:String):AnchorElement {
 		var anchor = Browser.document.createAnchorElement();
 		anchor.innerText = text;
-		anchor.href = StringTools.urlEncode(config.bucketUrl + filePath);
+		anchor.href = config.bucketUrl + StringTools.urlEncode(filePath);
 		return anchor;
 	}
 	
