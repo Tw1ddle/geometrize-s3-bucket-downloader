@@ -14,6 +14,7 @@ import js.html.DivElement;
 #if minimal_example
 @:build(CodeCompletion.buildLocalFile("bin/minimal_example/index.html"))
 #end
+@:keep
 class ID {}
 
 /**
@@ -45,10 +46,10 @@ class Main {
 	private inline function init():Void {
 		// Setup the custom configurations for different build targets/S3 buckets
 		#if geometrize_installer
-		var config = new BucketConfig("https://geometrize-installer-bucket.s3.amazonaws.com/", ["index.html", "s3-bucket-downloader.js", "style.min.css", "sortable.min.js"], []);
+		var config = new BucketConfig("https://geometrize-installer-bucket.s3.amazonaws.com/", ["index.html", "s3-bucket-downloader.js", "style.css", "sortable.min.js", "favicon.png"], []);
 		#end
 		#if geometrize_lib_example
-		var config = new BucketConfig("https://geometrize-lib-example-bucket.s3.amazonaws.com/", ["index.html", "s3-bucket-downloader.js", "style.min.css", "sortable.min.js"], []);
+		var config = new BucketConfig("https://geometrize-lib-example-bucket.s3.amazonaws.com/", ["index.html", "s3-bucket-downloader.js", "style.css", "sortable.min.js", "favicon.png"], []);
 		#end
 		#if minimal_example
 		var config = new BucketConfig("https://minimal-example-bucket.s3.amazonaws.com/", ["index.html", "s3-bucket-downloader.js"], []);

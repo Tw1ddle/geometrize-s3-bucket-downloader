@@ -2,3 +2,9 @@
 
 # Enable full dead code elimination
 -dce full
+
+# Minify the generated js
+-lib closure
+
+# Turn on advanced compilation
+# -D closure_advanced

@@ -2,6 +2,11 @@ sudo: required
 dist: trusty
 language: haxe
 
+# Get haxelib dependencies
+install:
+  # Get closure haxelib for minifying the generated js
+  - haxelib install closure
+
 # Build the projects
 script:
   - haxe s3_bucket_downloader.hxml geometrize_installer.hxml
