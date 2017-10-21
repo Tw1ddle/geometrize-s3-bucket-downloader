@@ -2,9 +2,11 @@ sudo: required
 dist: trusty
 language: haxe
 
-# Build the project
+# Build the projects
 script:
-  - haxe geometrize-s3-bucket-downloader.hxml release.hxml
+  - haxe s3_bucket_downloader.hxml geometrize_installer.hxml
+  - haxe s3_bucket_downloader.hxml geometrize_lib_example.hxml
+  - haxe s3_bucket_downloader.hxml minimal_example.hxml
 
 # Deploy the generated pages to the Geometrize S3 buckets
 deploy:
@@ -12,13 +14,20 @@ deploy:
     access_key_id: ${AWS_ACCESS_KEY_ID}
     secret_access_key: ${AWS_SECRET_ACCESS_KEY}
     bucket: ${AWS_S3_GEOMETRIZE_INSTALLER_BUCKET_NAME}
-    local_dir: bin/release
+    local_dir: bin/geometrize-installer
     skip_cleanup: true
     acl: public_read
   - provider: s3
     access_key_id: ${AWS_ACCESS_KEY_ID}
     secret_access_key: ${AWS_SECRET_ACCESS_KEY}
     bucket: ${AWS_S3_GEOMETRIZE_EXAMPLE_BUCKET_NAME}
-    local_dir: bin/release
+    local_dir: bin/geometrize-lib-example
+    skip_cleanup: true
+    acl: public_read
+  - provider: s3
+    access_key_id: ${AWS_ACCESS_KEY_ID}
+    secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+    bucket: ${AWS_S3_MINIMAL_EXAMPLE_BUCKET_NAME}
+    local_dir: bin/minimal_example
     skip_cleanup: true
     acl: public_read

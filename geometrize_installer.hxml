@@ -1,0 +1,3 @@
+-D geometrize_installer
+
+-js bin/geometrize_installer/s3-bucket-downloader.js

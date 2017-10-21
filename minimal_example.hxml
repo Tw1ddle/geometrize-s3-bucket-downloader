@@ -1,0 +1,3 @@
+-D minimal_example
+
+-js bin/minimal_example/s3-bucket-downloader.js

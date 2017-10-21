@@ -42,7 +42,6 @@ class DirectoryInfo {
  */
 class BucketListing {
 	private var config:BucketConfig;
-	
 	private var navigationContainer:DivElement;
 	private var listingTableContainer:DivElement;
 	private var loadingSpinner:DivElement;
@@ -98,7 +97,9 @@ class BucketListing {
 			listingTableContainer.appendChild(table);
 			
 			// Make the newly created table sortable
+			#if !minimal_example // Minimal example table is not sortable
 			Sortable.init();
+			#end
 			
 			loadingSpinner.className = "";
 			listingTableContainer.style.display = "";
@@ -119,7 +120,7 @@ class BucketListing {
 	 * @return A query URL for a GET operation, which can be used to request an XML response describing some or all of the objects in a bucket.
 	 */
 	public function getQueryUrlForRootDirectory():String {
-		var baseUrl = config.BUCKET_URL + '?list-type=2' + '&delimiter=/';
+		var baseUrl = config.bucketUrl + '?list-type=2' + '&delimiter=/';
 		return baseUrl;
 	}
 	
@@ -147,7 +148,7 @@ class BucketListing {
 	private function makeAnchorLinkForFile(text:String, filePath:String):AnchorElement {
 		var anchor = Browser.document.createAnchorElement();
 		anchor.innerText = text;
-		anchor.href = config.BUCKET_URL + filePath;
+		anchor.href = config.bucketUrl + filePath;
 		return anchor;
 	}
 	
@@ -376,13 +377,13 @@ class BucketListing {
 		
 		table.appendChild(makeHeader());
 		for (dir in info.directories) {
-			if (Lambda.has(config.EXCLUDE_DIRECTORIES, dir.prefix)) {
+			if (Lambda.has(config.excludeDirectories, dir.prefix)) {
 				continue;
 			}
 			tableBody.appendChild(makeRowForDir(dir));
 		}
 		for (file in info.files) {
-			if (Lambda.has(config.EXCLUDE_FILES, file.fileName)) {
+			if (Lambda.has(config.excludeFiles, file.fileName)) {
 				continue;
 			}
 			tableBody.appendChild(makeRowForFile(file));

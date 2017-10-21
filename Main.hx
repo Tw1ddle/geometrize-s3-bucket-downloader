@@ -5,7 +5,15 @@ import js.html.ButtonElement;
 import js.html.DivElement;
 
 // Automatic HTML code completion, point this at your HTML
-@:build(CodeCompletion.buildLocalFile("bin/release/index.html"))
+#if geometrize_installer
+@:build(CodeCompletion.buildLocalFile("bin/geometrize_installer/index.html"))
+#end
+#if geometrize_lib_example
+@:build(CodeCompletion.buildLocalFile("bin/geometrize_lib_example/index.html"))
+#end
+#if minimal_example
+@:build(CodeCompletion.buildLocalFile("bin/minimal_example/index.html"))
+#end
 class ID {}
 
 /**
@@ -17,13 +25,10 @@ class Main {
 	private static inline function getElement(id:String):Dynamic {
 		return Browser.document.getElementById(id);
 	}
-	private static var navigation:DivElement = getElement(ID.navigation);
-	private static var listing:DivElement = getElement(ID.listing);
-	private static var loadingSpinner:DivElement = getElement(ID.loadingspinner);
-	private static var refreshButton:ButtonElement = getElement(ID.refreshbutton);
-	
-	// Entity that populates the bucket and drives the listing table, loading spinner and refresh button
-	private var bucket:BucketListing = new BucketListing(new BucketConfig(), navigation, listing, loadingSpinner, refreshButton);
+	private static var navigation:DivElement = getElement(ID.navigation); // The container that will hold the navigation chain from the root of the bucket i.e. "root->folder->subfolder"
+	private static var listing:DivElement = getElement(ID.listing); // The container that will hold the table containing the actual bucket listing of files/directories etc
+	private static var loadingSpinner:DivElement = getElement(ID.loadingspinner); // The container for the loading spinner
+	private static var retryButton:ButtonElement = getElement(ID.retrybutton); // The container for the retry button
 	
 	private static function main():Void {
 		var main = new Main();
@@ -38,6 +43,21 @@ class Main {
 	}
 
 	private inline function init():Void {
+		// Setup the custom configurations for different build targets/S3 buckets
+		#if geometrize_installer
+		var config = new BucketConfig("https://geometrize-installer-bucket.s3.amazonaws.com/", ["index.html", "s3-bucket-downloader.js", "style.min.css", "sortable.min.js"], []);
+		#end
+		#if geometrize_lib_example
+		var config = new BucketConfig("https://geometrize-lib-example-bucket.s3.amazonaws.com/", ["index.html", "s3-bucket-downloader.js", "style.min.css", "sortable.min.js"], []);
+		#end
+		#if minimal_example
+		var config = new BucketConfig("https://geometrize-installer-bucket.s3.amazonaws.com/", ["index.html", "s3-bucket-downloader.js"], []);
+		#end
+		
+		// Create entity that populates the bucket, drives the listing table, loading spinner and retry button
+		var bucket:BucketListing = new BucketListing(config, navigation, listing, loadingSpinner, retryButton);
+		
+		// Start by requesting the directory listing for the root/top level of the bucket
 		bucket.requestData(bucket.getQueryUrlForRootDirectory());
 	}
 }

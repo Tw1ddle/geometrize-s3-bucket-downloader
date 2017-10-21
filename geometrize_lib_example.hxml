@@ -1,0 +1,3 @@
+-D geometrize_lib_example
+
+-js bin/geometrize_lib_example/s3-bucket-downloader.js

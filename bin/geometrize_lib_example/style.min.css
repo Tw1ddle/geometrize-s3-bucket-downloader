@@ -1,0 +1,156 @@
+body {
+    font-family: 'Open Sans', sans-serif;
+    background-color: #000000;
+    color: #000000;
+    font-size: 13px;
+}
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
+    background: transparent;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    vertical-align: baseline;
+    outline: 0;
+}
+
+h1 {
+    font: 600 50px "Open Sans", sans-serif;
+    letter-spacing: -3px;
+    margin-bottom: 0px;
+}
+
+h2 {
+    font: 400 30px "Open Sans";
+    letter-spacing: -2px;
+}
+
+h3 {
+    font: 600 20px "Open Sans";
+    letter-spacing: -1px;
+}
+
+p {
+    font-family: "Open Sans", sans-serif;
+    font-size: 15px;
+    line-height: 22px;
+    color: #888888;
+    margin: 10px 0;
+}
+a {
+    color: #000000;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+p a {
+    color: #000000;
+    text-decoration: none;
+}
+
+html {
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+}
+
+li {
+    user-select: text;
+    -moz-user-select: text;
+    -khtml-user-select: text;
+    -ms-user-select: text;
+    -webkit-user-select: text;
+    -o-user-select: text;
+}
+
+body {
+    text-align: center;
+    background-color: #ffffff;
+}
+
+a:hover {
+    color: #555555;
+}
+
+.stitched {
+    min-width: 60%;
+    display: inline-block;
+    padding: 15px;
+    margin: 15px;
+    background: #ffffff;
+    color: #000000;
+    border-radius: 0px;
+    box-shadow: 0 0 0 4px #ffffff, 2px 1px 6px 4px rgba(10, 10, 0, 0.5);
+}
+
+@keyframes spinner {
+    to {transform: rotate(360deg);}
+}
+.spinner:before {
+    content: '';
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+    margin-top: 80px;
+    margin-bottom: 80px;
+    border-radius: 50%;
+    border: 4px solid #ccc;
+    border-top-color: #333;
+    animation: spinner .6s linear infinite;
+}
+
+#refreshbutton {
+    margin: 10px;
+    -moz-box-shadow: inset 0px 1px 0px 0px #ffffff;
+    -webkit-box-shadow: inset 0px 1px 0px 0px #ffffff;
+    box-shadow: inset 0px 1px 0px 0px #ffffff;
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ffffff), color-stop(1, #f6f6f6));
+    background: -moz-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+    background: -webkit-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+    background: -o-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+    background: -ms-linear-gradient(top, #ffffff 5%, #f6f6f6 100%);
+    background: linear-gradient(to bottom, #ffffff 5%, #f6f6f6 100%);
+    background-color: #ffffff;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    border: 1px solid #dcdcdc;
+    display: inline-block;
+    cursor: pointer;
+    color: #666666;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 6px 24px;
+    text-decoration: none;
+    text-shadow: 0px 1px 0px #ffffff;
+}
+
+table {
+    width: 100%;
+}
+
+tbody tr:nth-child(odd) td {
+    background-color: #f0f0f0;
+}
+
+tbody tr:first-child {
+    border-bottom: none;
+}
+
+tbody tr {
+    height: 30px;
+    border-bottom: 1px solid #D3D7CF;
+}
+
+table th, table td {
+    line-height: 1.6em;
+    text-align: left;
+}
+
+.bucket_listing_item_icon_header_cell, .bucket_listing_file_icon_cell, .bucket_listing_dir_icon_cell {
+    width: 16px;
+    height: 16px;
+}
