@@ -14,14 +14,14 @@ deploy:
     access_key_id: ${AWS_ACCESS_KEY_ID}
     secret_access_key: ${AWS_SECRET_ACCESS_KEY}
     bucket: ${AWS_S3_GEOMETRIZE_INSTALLER_BUCKET_NAME}
-    local_dir: bin/geometrize-installer
+    local_dir: bin/geometrize_installer
     skip_cleanup: true
     acl: public_read
   - provider: s3
     access_key_id: ${AWS_ACCESS_KEY_ID}
     secret_access_key: ${AWS_SECRET_ACCESS_KEY}
     bucket: ${AWS_S3_GEOMETRIZE_EXAMPLE_BUCKET_NAME}
-    local_dir: bin/geometrize-lib-example
+    local_dir: bin/geometrize_lib_example
     skip_cleanup: true
     acl: public_read
   - provider: s3
