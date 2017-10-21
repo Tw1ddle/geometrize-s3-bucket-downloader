@@ -12,7 +12,11 @@ The generated Javascript requests bucket listings using the Amazon GET Bucket (L
 
 ## Screenshots
 
+Styled production example:
+
 [![Styled S3 downloader example for Geometrize](https://github.com/Tw1ddle/geometrize-s3-bucket-downloader/blob/master/screenshots/s3_downloader_styled_for_geometrize.png?raw=true "Styled S3 downloader example for Geometrize")](https://s3.amazonaws.com/geometrize-installer-bucket/index.html)
+
+Minimal unstyled example:
 
 [![Minimal unstyled S3 downloader example](https://github.com/Tw1ddle/geometrize-s3-bucket-downloader/blob/master/screenshots/s3_downloader_unstyled.png?raw=true "Minimal unstyled S3 downloader example")](https://s3.amazonaws.com/minimal-example-bucket/index.html)
 
