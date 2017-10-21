@@ -46,13 +46,13 @@ class Main {
 	private inline function init():Void {
 		// Setup the custom configurations for different build targets/S3 buckets
 		#if geometrize_installer
-		var config = new BucketConfig("https://geometrize-installer-bucket.s3.amazonaws.com/", ["index.html", "s3-bucket-downloader.min.js", "style.css", "sortable.min.js", "favicon.png"], []);
+		var config = new BucketConfig("https://geometrize-installer-bucket.s3.amazonaws.com/", ["index.html", "s3-bucket-downloader.js", "s3-bucket-downloader.min.js", "style.css", "sortable.min.js", "favicon.png"], []);
 		#end
 		#if geometrize_lib_example
-		var config = new BucketConfig("https://geometrize-lib-example-bucket.s3.amazonaws.com/", ["index.html", "s3-bucket-downloader.min.js", "style.css", "sortable.min.js", "favicon.png"], []);
+		var config = new BucketConfig("https://geometrize-lib-example-bucket.s3.amazonaws.com/", ["index.html", "s3-bucket-downloader.js", "s3-bucket-downloader.min.js", "style.css", "sortable.min.js", "favicon.png"], []);
 		#end
 		#if minimal_example
-		var config = new BucketConfig("https://minimal-example-bucket.s3.amazonaws.com/", ["index.html", "s3-bucket-downloader.min.js"], []);
+		var config = new BucketConfig("https://minimal-example-bucket.s3.amazonaws.com/", ["index.html", "s3-bucket-downloader.js", "s3-bucket-downloader.min.js"], []);
 		#end
 		
 		// Create entity that populates the bucket, drives the listing table, loading spinner and retry button
