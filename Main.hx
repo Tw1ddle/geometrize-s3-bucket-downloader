@@ -25,10 +25,10 @@ class Main {
 	private static inline function getElement(id:String):Dynamic {
 		return Browser.document.getElementById(id);
 	}
-	private static var navigation:DivElement = getElement(ID.navigation); // The container that will hold the navigation chain from the root of the bucket i.e. "root->folder->subfolder"
-	private static var listing:DivElement = getElement(ID.listing); // The container that will hold the table containing the actual bucket listing of files/directories etc
-	private static var loadingSpinner:DivElement = getElement(ID.loadingspinner); // The container for the loading spinner
-	private static var retryButton:ButtonElement = getElement(ID.retrybutton); // The container for the retry button
+	private static var navigation:DivElement = getElement(ID.bucket_navigation); // The container that will hold the navigation chain from the root of the bucket i.e. "root->folder->subfolder"
+	private static var listing:DivElement = getElement(ID.bucket_listing); // The container that will hold the table containing the actual bucket listing of files/directories etc
+	private static var loadingSpinner:DivElement = getElement(ID.bucket_loadingspinner); // The container for the loading spinner
+	private static var retryButton:ButtonElement = getElement(ID.bucket_retrybutton); // The container for the retry button
 	
 	private static function main():Void {
 		var main = new Main();
@@ -51,7 +51,7 @@ class Main {
 		var config = new BucketConfig("https://geometrize-lib-example-bucket.s3.amazonaws.com/", ["index.html", "s3-bucket-downloader.js", "style.min.css", "sortable.min.js"], []);
 		#end
 		#if minimal_example
-		var config = new BucketConfig("https://geometrize-installer-bucket.s3.amazonaws.com/", ["index.html", "s3-bucket-downloader.js"], []);
+		var config = new BucketConfig("https://minimal-example-bucket.s3.amazonaws.com/", ["index.html", "s3-bucket-downloader.js"], []);
 		#end
 		
 		// Create entity that populates the bucket, drives the listing table, loading spinner and retry button

@@ -35,7 +35,7 @@ class CodeCompletion {
 	}
 
 	private static function build(s:String):Array<Field> {
-		var r = ~/id=["']([A-Za-z0-9]+)["']/;
+		var r = ~/id=["']([A-Za-z0-9_-]+)["']/;
 		var ids = [];
 
 		while (r.match(s)) {

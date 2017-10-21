@@ -1,6 +1,7 @@
 package;
 
 import haxe.Http;
+import haxe.io.Path;
 import haxe.xml.Parser;
 import js.Browser;
 import js.html.AnchorElement;
@@ -12,7 +13,7 @@ import js.html.TableRowElement;
 
 // Represents metadata listing info for a file in an S3 bucket
 typedef S3File = {
-	fileName:String,
+	filePath:String,
 	lastModified:String,
 	size:String
 }
@@ -20,7 +21,7 @@ typedef S3File = {
 // Represents metadata listing info for a directory in an S3 bucket
 typedef S3Directory = {
 	prefix:String
-};
+}
 
 /**
  * Represents info relating to a listing of a "directory" within an S3 bucket
@@ -42,6 +43,7 @@ class DirectoryInfo {
  */
 class BucketListing {
 	private var config:BucketConfig;
+	
 	private var navigationContainer:DivElement;
 	private var listingTableContainer:DivElement;
 	private var loadingSpinner:DivElement;
@@ -77,7 +79,7 @@ class BucketListing {
 			loadingSpinner.className = "";
 			listingTableContainer.style.display = "none";
 		}
-
+		
 		var http = new Http(bucketRequestUrl);
 		http.onData = function(data:String) {
 			if (data == null || data.length == 0) {
@@ -125,17 +127,17 @@ class BucketListing {
 	}
 	
 	/**
-	 * Builds the Amazon S3 GET Bucket (List Objects) Version 2 query URL for the given directory in the bucket.
-	 * @param directoryPath The directory within the bucket to create the query URL for e.g. "windows/". Must end with a forward slash.
+	 * Builds the Amazon S3 GET Bucket (List Objects) Version 2 query URL for the given item in the bucket.
+	 * @param itemPath The item within the bucket to create the query URL for e.g. "windows/". Must end with a forward slash if a directory.
 	 * @return A query URL for a GET operation, which can be used to request an XML response describing some or all of the objects in a bucket.
 	 */
-	private function getQueryUrlForDirectory(directoryPath:String):String {
+	private function getQueryUrlForItem(itemPath:String):String {
 		var url = getQueryUrlForRootDirectory();
-		if (directoryPath.length == 0) {
+		if (itemPath.length == 0) {
 			return url;
 		}
 		
-		url += '&prefix=' + StringTools.urlEncode(directoryPath);
+		url += '&prefix=' + StringTools.urlEncode(itemPath);
 		return url;
 	}
 	
@@ -162,7 +164,7 @@ class BucketListing {
 		var button = Browser.document.createButtonElement();
 		button.innerText = text;
 		button.onclick = function() {
-			requestData(getQueryUrlForDirectory(directoryPath));
+			requestData(getQueryUrlForItem(directoryPath));
 		}
 		return button;
 	}
@@ -175,8 +177,7 @@ class BucketListing {
 	 * @return A URL pointing to the file in the bucket.
 	 */
 	private function getUrlForFile(directoryPath:String, fileName:String):String {
-		var url = getQueryUrlForDirectory(directoryPath);
-		return url; // TODO get regular file link
+		return getQueryUrlForItem(directoryPath);
 	}
 	
 	/**
@@ -204,11 +205,11 @@ class BucketListing {
 			while (fileNodes.hasNext()) {
 				var fileNode = fileNodes.next();
 				
-				var fileName:String = fileNode.elementsNamed("Key").next().firstChild().nodeValue;
+				var filePath:String = fileNode.elementsNamed("Key").next().firstChild().nodeValue;
 				var lastModified:String = fileNode.elementsNamed("LastModified").next().firstChild().nodeValue;
 				var sizeBytes:String = fileNode.elementsNamed("Size").next().firstChild().nodeValue;
 				
-				files.push({ fileName:fileName, lastModified: lastModified, size: sizeBytes });
+				files.push({ filePath:filePath, lastModified: lastModified, size: sizeBytes });
 			}
 			
 			var directoryNodes = result.elementsNamed("CommonPrefixes");
@@ -236,24 +237,22 @@ class BucketListing {
 		
 		var addButton = function(text:String, directoryPath:String):Void {
 			var button = makeButtonForDirectory(text, directoryPath);
+			button.className = "bucket_navigation_segment";
 			navigation.appendChild(button);
 		}
 		
 		var parts:Array<String> = prefix.length == 0 ? [""] : prefix.split("/");
 		
-		addButton("root", "");
+		addButton("root/", "");
 		
 		var partsChain:String = "";
 		var i = 0;
 		while (i < parts.length - 1) {
 			partsChain += parts[i] + "/";
 			
-			addButton(parts[i], partsChain);
+			addButton(parts[i] + "/", partsChain);
 			
 			i++;
-			if (i < parts.length - 1) {
-				//navigationContent += " >> ";
-			}
 		}
 		
 		return navigation;
@@ -271,15 +270,10 @@ class BucketListing {
 			var row:TableRowElement = Browser.document.createTableRowElement();
 			header.appendChild(row);
 			
-			var iconTypeCell:Element = cast Browser.document.createElement("th");
-			iconTypeCell.setAttribute("data-sortable", "false");
-			iconTypeCell.textContent = "";
-			iconTypeCell.className = "bucket_listing_item_icon_header_cell";
-			
 			var nameCell:Element = cast Browser.document.createElement("th");
 			nameCell.setAttribute("data-sorted", "true");
-			nameCell.setAttribute("data-sorted-direction", "descending");
 			nameCell.setAttribute("data-sortable-type", "alpha");
+			nameCell.setAttribute("data-sorted-direction", "ascending");
 			nameCell.textContent = "Name";
 			nameCell.className = "bucket_listing_item_name_header_cell";
 			
@@ -293,7 +287,6 @@ class BucketListing {
 			sizeCell.textContent = "Size";
 			sizeCell.className = "bucket_listing_item_size_header_cell";
 			
-			row.appendChild(iconTypeCell);
 			row.appendChild(nameCell);
 			row.appendChild(modifiedDateCell);
 			row.appendChild(sizeCell);
@@ -305,25 +298,21 @@ class BucketListing {
 		var makeRowForFile = function(file:S3File) {
 			var row = Browser.document.createTableRowElement();
 			
-			var iconTypeCell:TableCellElement = Browser.document.createTableCellElement();
-			iconTypeCell.innerText = "🖹";
-			iconTypeCell.className = "bucket_listing_file_icon_cell";
-			
 			var nameCell:TableCellElement = Browser.document.createTableCellElement();
 			nameCell.className = "bucket_listing_file_name_cell";
 			
-			var fileLink:AnchorElement = makeAnchorLinkForFile(file.fileName, file.fileName);
+			var fileLink:AnchorElement = makeAnchorLinkForFile("🖹 " + Path.withoutDirectory(file.filePath), file.filePath);
 			nameCell.appendChild(fileLink);
 			
 			var modifiedDateCell:TableCellElement = Browser.document.createTableCellElement();
-			modifiedDateCell.textContent = file.lastModified;
+			modifiedDateCell.textContent = StringTools.replace(file.lastModified, "T", " ");
 			modifiedDateCell.className = "bucket_listing_file_modified_date_cell";
 			
 			var sizeCell:TableCellElement = Browser.document.createTableCellElement();
 			sizeCell.textContent = Util.formatBytes(Std.parseFloat(file.size), 2);
+			sizeCell.setAttribute("data-value", file.size);
 			sizeCell.className = "bucket_listing_file_size_cell";
 			
-			row.appendChild(iconTypeCell);
 			row.appendChild(nameCell);
 			row.appendChild(modifiedDateCell);
 			row.appendChild(sizeCell);
@@ -335,14 +324,10 @@ class BucketListing {
 		var makeRowForDir = function(dir:S3Directory) {
 			var row = Browser.document.createTableRowElement();
 			
-			var iconTypeCell:TableCellElement = Browser.document.createTableCellElement();
-			iconTypeCell.innerText = "📁";
-			iconTypeCell.className = "bucket_listing_dir_icon_cell";
-			
 			var nameCell:TableCellElement = Browser.document.createTableCellElement();
 			nameCell.className = "bucket_listing_dir_name_cell";
 			
-			var dirLink:ButtonElement = makeButtonForDirectory(dir.prefix, dir.prefix);
+			var dirLink:ButtonElement = makeButtonForDirectory("📁 " + dir.prefix, dir.prefix);
 			nameCell.appendChild(dirLink);
 			
 			var modifiedDateCell:TableCellElement = Browser.document.createTableCellElement();
@@ -353,7 +338,6 @@ class BucketListing {
 			sizeCell.textContent = "-";
 			sizeCell.className = "bucket_listing_dir_size_cell";
 			
-			row.appendChild(iconTypeCell);
 			row.appendChild(nameCell);
 			row.appendChild(modifiedDateCell);
 			row.appendChild(sizeCell);
@@ -383,7 +367,10 @@ class BucketListing {
 			tableBody.appendChild(makeRowForDir(dir));
 		}
 		for (file in info.files) {
-			if (Lambda.has(config.excludeFiles, file.fileName)) {
+			if (Lambda.has(config.excludeFiles, file.filePath)) {
+				continue;
+			}
+			if (Path.withoutDirectory(file.filePath).length == 0) {
 				continue;
 			}
 			tableBody.appendChild(makeRowForFile(file));
