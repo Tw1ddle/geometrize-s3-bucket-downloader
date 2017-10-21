@@ -151,6 +151,7 @@ class BucketListing {
 		var anchor = Browser.document.createAnchorElement();
 		anchor.innerText = text;
 		anchor.href = config.bucketUrl + StringTools.urlEncode(filePath);
+		anchor.download = Path.withoutDirectory(filePath);
 		return anchor;
 	}
 	
