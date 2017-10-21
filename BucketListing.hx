@@ -150,7 +150,7 @@ class BucketListing {
 	private function makeAnchorLinkForFile(text:String, filePath:String):AnchorElement {
 		var anchor = Browser.document.createAnchorElement();
 		anchor.innerText = text;
-		anchor.href = config.bucketUrl + StringTools.urlEncode(filePath);
+		anchor.href = config.bucketUrl + StringTools.replace(StringTools.urlEncode(filePath), "%2F", "/"); // Avoid encoding forward slashes in file path, as it causes browsers to use the full path as the filename
 		anchor.download = Path.withoutDirectory(filePath);
 		return anchor;
 	}
