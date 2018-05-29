@@ -101,6 +101,11 @@ class BucketListing {
 			// Make the newly created table sortable
 			#if !minimal_example // Minimal example table is not sortable
 			Sortable.init();
+			
+			// Force sorting on the bucket listing item modified column, so newest items appear first
+			// there should be a better way to do this, but I don't know what it is...
+			Browser.document.getElementById("bucket_listing_item_modified_date_header_cell_id").click();
+			Browser.document.getElementById("bucket_listing_item_modified_date_header_cell_id").click();
 			#end
 			
 			loadingSpinner.className = "";
@@ -272,9 +277,7 @@ class BucketListing {
 			header.appendChild(row);
 			
 			var nameCell:Element = cast Browser.document.createElement("th");
-			nameCell.setAttribute("data-sorted", "true");
 			nameCell.setAttribute("data-sortable-type", "alpha");
-			nameCell.setAttribute("data-sorted-direction", "ascending");
 			nameCell.textContent = "Name";
 			nameCell.className = "bucket_listing_item_name_header_cell";
 			
@@ -282,6 +285,7 @@ class BucketListing {
 			modifiedDateCell.setAttribute("data-sortable-type", "date");
 			modifiedDateCell.textContent = "Modified";
 			modifiedDateCell.className = "bucket_listing_item_modified_date_header_cell";
+			modifiedDateCell.id = "bucket_listing_item_modified_date_header_cell_id";
 			
 			var sizeCell:Element = cast Browser.document.createElement("th");
 			sizeCell.setAttribute("data-sortable-type", "numeric");
