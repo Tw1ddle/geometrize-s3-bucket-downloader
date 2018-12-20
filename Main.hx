@@ -11,6 +11,9 @@ import js.html.DivElement;
 #if geometrize_lib_example
 @:build(CodeCompletion.buildLocalFile("bin/geometrize_lib_example/index.html"))
 #end
+#if dataslinger_example
+@:build(CodeCompletion.buildLocalFile("bin/dataslinger_example/index.html"))
+#end
 #if minimal_example
 @:build(CodeCompletion.buildLocalFile("bin/minimal_example/index.html"))
 #end
@@ -50,6 +53,9 @@ class Main {
 		#end
 		#if geometrize_lib_example
 		var config = new BucketConfig("https://geometrize-lib-example-bucket.s3.amazonaws.com/", ["index.html", "s3-bucket-downloader.js", "s3-bucket-downloader.min.js", "style.css", "sortable.min.js", "favicon.png"], []);
+		#end
+		#if dataslinger_example
+		var config = new BucketConfig("https://dataslinger-bucket.s3.amazonaws.com/", ["index.html", "s3-bucket-downloader.js", "s3-bucket-downloader.min.js", "style.css", "sortable.min.js", "favicon.png"], []);
 		#end
 		#if minimal_example
 		var config = new BucketConfig("https://minimal-example-bucket.s3.amazonaws.com/", ["index.html", "s3-bucket-downloader.js", "s3-bucket-downloader.min.js"], []);

@@ -1,0 +1,3 @@
+-D dataslinger_example
+
+-js bin/dataslinger_example/s3-bucket-downloader.js
