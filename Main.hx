@@ -1,8 +1,11 @@
 package;
 
+import haxe.Http;
+import haxe.xml.Parser;
 import js.Browser;
 import js.html.ButtonElement;
 import js.html.DivElement;
+import js.html.URL;
 
 // Automatic HTML code completion, point this at your HTML
 #if geometrize_installer
@@ -61,10 +64,125 @@ class Main {
 		var config = new BucketConfig("https://minimal-example-bucket.s3.amazonaws.com/", ["index.html", "s3-bucket-downloader.js", "s3-bucket-downloader.min.js"], []);
 		#end
 		
+		var url = new URL(Browser.window.location.href);
+		var breadCrumb = url.searchParams.get("breadcrumb");
+		var downloadLatest = url.searchParams.get("dl_latest");
+		
 		// Create entity that populates the bucket, drives the listing table, loading spinner and retry button
 		var bucket:BucketListing = new BucketListing(config, navigation, listing, loadingSpinner, retryButton);
 		
-		// Start by requesting the directory listing for the root/top level of the bucket
-		bucket.requestData(bucket.getQueryUrlForRootDirectory());
+		var queryUrl = bucket.getQueryUrlForRootDirectory();
+		
+		// If there is a breadcrumb in the link, use it to set the initial directory
+		if (breadCrumb != null && breadCrumb.length != 0) {
+			queryUrl += ("&prefix=" + breadCrumb);
+		}
+		
+		// If the download latest flag is set, set a callback to download the latest file in the directory - when the request completes
+		var doDownload = null;
+		if (downloadLatest != null) {
+			doDownload = function(info:DirectoryInfo) {
+				var files = info.files;
+				if (files.length == 0) {
+					return;
+				}
+				
+				// Sort newest-oldest
+				files.sort(function(first:S3File, second:S3File):Int {
+				    var a = first.lastModified;
+					var b = second.lastModified;
+					if (a > b) {
+						return -1;
+					}
+					if (a < b) {
+						return 1;
+					}
+					return 0;
+				});
+				
+				var newestFile:S3File = files[0];
+				
+				var downloadHref = bucket.makeHrefForFile(newestFile.filePath);
+				Browser.window.location.href = downloadHref;
+			}
+		}
+		
+		// Start by requesting the directory listing
+		bucket.requestData(queryUrl, doDownload, doDownload != null);
+	}
+	
+	/**
+	 * Parses the XML from the Amazon S3 GET Bucket (List Objects) Version 2 query response and returns easily-used info about the bucket contents.
+	 * @param xml The XML response to parse.
+	 * @return Easily-used info about the bucket contents.
+	 */
+	public static function getInfoFromS3ListingData(xml:Xml):DirectoryInfo {
+		var files:Array<S3File> = [];
+		var dirs:Array<S3Directory> = [];
+		var prefix:String = "";
+		
+		var resultNodes = xml.elementsNamed("ListBucketResult");
+		while (resultNodes.hasNext()) {
+			var result = resultNodes.next();
+			
+			var prefixNodes = result.elementsNamed("Prefix");
+			while (prefixNodes.hasNext()) {
+				var prefixNode = prefixNodes.next();
+				
+				prefix = prefixNode.firstChild().nodeValue;
+			}
+			
+			var fileNodes = result.elementsNamed("Contents");
+			while (fileNodes.hasNext()) {
+				var fileNode = fileNodes.next();
+				
+				var filePath:String = fileNode.elementsNamed("Key").next().firstChild().nodeValue;
+				var lastModified:String = fileNode.elementsNamed("LastModified").next().firstChild().nodeValue;
+				var sizeBytes:String = fileNode.elementsNamed("Size").next().firstChild().nodeValue;
+				
+				files.push({ filePath:filePath, lastModified: lastModified, size: sizeBytes });
+			}
+			
+			var directoryNodes = result.elementsNamed("CommonPrefixes");
+			while (directoryNodes.hasNext()) {
+				var directoryNode = directoryNodes.next();
+				
+				var prefix:String = directoryNode.elementsNamed("Prefix").next().firstChild().nodeValue;
+				
+				dirs.push({ prefix: prefix });
+			}
+		}
+		
+		return new DirectoryInfo(prefix, files, dirs);
+	}
+	
+	public function requestData(bucketRequestUrl:String):Void {
+		var onGetFailed = function(errorMessage:String) {
+
+		}
+		
+		var http = new Http(bucketRequestUrl);
+		http.onData = function(data:String) {
+			if (data == null || data.length == 0) {
+				onGetFailed("Query failed, no data received. Click to retry...");
+				return;
+			}
+			
+			var xml:Xml = Parser.parse(data);
+			var info = Main.getInfoFromS3ListingData(xml);
+			var files = info.files;
+			
+			if (files == null) {
+				return;
+			}
+			
+			// Note single request caps out at MaxKeys item listings (~1000)
+		};
+		http.onError = function(error:String) {
+			onGetFailed("Query failed, encountered error:" + error);
+		};
+		http.onStatus = function (status:Int) {
+		}
+		http.request(false);
 	}
 }

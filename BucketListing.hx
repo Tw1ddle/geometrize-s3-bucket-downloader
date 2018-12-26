@@ -11,33 +11,6 @@ import js.html.Element;
 import js.html.TableCellElement;
 import js.html.TableRowElement;
 
-// Represents metadata listing info for a file in an S3 bucket
-typedef S3File = {
-	filePath:String,
-	lastModified:String,
-	size:String
-}
-
-// Represents metadata listing info for a directory in an S3 bucket
-typedef S3Directory = {
-	prefix:String
-}
-
-/**
- * Represents info relating to a listing of a "directory" within an S3 bucket
- * @author Sam Twidale (http://www.geometrize.co.uk/)
- */
-class DirectoryInfo {
-	public function new(prefix:String, files:Array<S3File>, directories:Array<S3Directory>) {
-		this.prefix = prefix;
-		this.files = files;
-		this.directories = directories;
-	}
-	public var prefix(default, null):String;
-	public var files(default, null):Array<S3File>;
-	public var directories(default, null):Array<S3Directory>;
-}
-
 /**
  * Populates a table with S3 bucket directory listings, presents a table that acts as a bucket file/subdirectory browser, with loading spinner and retry button
  */
@@ -65,8 +38,10 @@ class BucketListing {
 	
 	/**
 	 * Requests the directory listing data from Amazon S3 and manages the UI while it waits for a response.
+	 * onDirectoryInfoCreated callback triggers after the request completes.
+	 * synchronous Whether the request is performed synchronously or asynchronously.
 	 */
-	public function requestData(bucketRequestUrl:String):Void {
+	public function requestData(bucketRequestUrl:String, onDirectoryInfoCreated:DirectoryInfo->Void = null, synchronous:Bool = false):Void {
 		// Make things look busy
 		loadingSpinner.className = "spinner";
 		listingTableContainer.style.display = "none";
@@ -88,7 +63,11 @@ class BucketListing {
 			}
 			
 			var xml:Xml = Parser.parse(data);
-			var info = getInfoFromS3ListingData(xml);
+			var info:DirectoryInfo = getInfoFromS3ListingData(xml);
+			
+			if (onDirectoryInfoCreated != null) {
+				onDirectoryInfoCreated(info);
+			}
 			
 			var nav:DivElement = buildNavigation(info);
 			navigationContainer.innerHTML = '';
@@ -155,9 +134,18 @@ class BucketListing {
 	private function makeAnchorLinkForFile(text:String, filePath:String):AnchorElement {
 		var anchor = Browser.document.createAnchorElement();
 		anchor.innerText = text;
-		anchor.href = config.bucketUrl + StringTools.replace(StringTools.urlEncode(filePath), "%2F", "/"); // Avoid encoding forward slashes in file path, as it causes browsers to use the full path as the filename
+		anchor.href = makeHrefForFile(filePath);
 		anchor.download = Path.withoutDirectory(filePath);
 		return anchor;
+	}
+	
+	/**
+	 * Makes a href for downloading the file at the given filepath.
+	 * @param	filePath The path to the file.
+	 * @return Href to the file, suitable for setting as href on anchor links etc.
+	 */
+	public function makeHrefForFile(filePath:String):String {
+		return config.bucketUrl + StringTools.replace(StringTools.urlEncode(filePath), "%2F", "/"); // Avoid encoding forward slashes in file path, as it causes browsers to use the full path as the filename
 	}
 	
 	/**
