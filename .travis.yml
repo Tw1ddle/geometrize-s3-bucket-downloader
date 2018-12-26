@@ -12,8 +12,9 @@ script:
   - haxe s3_bucket_downloader.hxml geometrize_installer.hxml
   - haxe s3_bucket_downloader.hxml geometrize_lib_example.hxml
   - haxe s3_bucket_downloader.hxml minimal_example.hxml
+  - haxe s3_bucket_downloader.hxml dataslinger_example.hxml
 
-# Deploy the generated pages to the Geometrize S3 buckets
+# Deploy the generated pages to the S3 buckets
 deploy:
   - provider: s3
     access_key_id: ${AWS_ACCESS_KEY_ID}
@@ -34,5 +35,12 @@ deploy:
     secret_access_key: ${AWS_SECRET_ACCESS_KEY}
     bucket: ${AWS_S3_MINIMAL_EXAMPLE_BUCKET_NAME}
     local_dir: bin/minimal_example
+    skip_cleanup: true
+    acl: public_read
+  - provider: s3
+    access_key_id: ${AWS_ACCESS_KEY_ID}
+    secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+    bucket: ${AWS_S3_DATASLINGER_EXAMPLE_BUCKET_NAME}
+    local_dir: bin/dataslinger_example
     skip_cleanup: true
     acl: public_read
