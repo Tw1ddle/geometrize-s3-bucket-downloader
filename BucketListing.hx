@@ -11,6 +11,8 @@ import js.html.Element;
 import js.html.TableCellElement;
 import js.html.TableRowElement;
 
+using StringTools;
+
 /**
  * Populates a table with S3 bucket directory listings, presents a table that acts as a bucket file/subdirectory browser, with loading spinner and retry button
  */
@@ -366,7 +368,14 @@ class BucketListing {
 			if (Path.withoutDirectory(file.filePath).length == 0) {
 				continue;
 			}
+			
+			// Special case for files ending with name __latest, don't show these
+			// (I use such a file for choosing an executable to use for CI testing etc with some installers)
+			if (file.filePath.endsWith("__latest")) {
+				continue;
+			}
 			tableBody.appendChild(makeRowForFile(file));
+
 		}
 		
 		return container;

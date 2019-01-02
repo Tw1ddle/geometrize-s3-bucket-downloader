@@ -7,6 +7,8 @@ import js.html.ButtonElement;
 import js.html.DivElement;
 import js.html.URL;
 
+using StringTools;
+
 // Automatic HTML code completion, point this at your HTML
 #if geometrize_installer
 @:build(CodeCompletion.buildLocalFile("bin/geometrize_installer/index.html"))
@@ -97,10 +99,13 @@ class Main {
 					if (a < b) {
 						return 1;
 					}
+					
 					return 0;
 				});
 				
-				var newestFile:S3File = files[0];
+				// Hacky code to work around files with name __latest used to mark builds
+				// I want to use for CI testing for some configurations
+				var newestFile:S3File = files[0].filePath.endsWith("__latest") ? files[1] : files[0];
 				
 				var downloadHref = bucket.makeHrefForFile(newestFile.filePath);
 				Browser.window.location.href = downloadHref;
