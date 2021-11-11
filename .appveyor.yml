@@ -5,10 +5,6 @@ branches:
 image:
   - Ubuntu2004
 
-environment:
-  GITHUB_API_KEY:
-    secure: w1zaTUARBAuhkAKUke5sBvSkVtlDGL8YfQxROzv5oGIynVJImn+KWGFVDxyjQore
-
   global:
     HAXELIB_ROOT: /home/appveyor/haxelib
     HAXE_INSTALLDIR: /home/appveyor/haxe

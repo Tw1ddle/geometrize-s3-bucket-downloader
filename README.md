@@ -1,7 +1,7 @@
 # S3 Bucket Browser
 
 [![License](https://img.shields.io/:license-mit-blue.svg?style=flat-square)](https://github.com/Tw1ddle/geometrize-s3-bucket-downloader/blob/master/LICENSE)
-[![Travis S3 Bucket Downloader Build Status](https://img.shields.io/travis/Tw1ddle/geometrize-s3-bucket-downloader.svg?style=flat-square)](https://travis-ci.org/Tw1ddle/geometrize-s3-bucket-downloader)
+[![Geometrize S3 Bucket Build Status](https://ci.appveyor.com/api/projects/status/github/Tw1ddle/geometrize-s3-bucket-downloader)](https://ci.appveyor.com/project/Tw1ddle/geometrize-s3-bucket-downloader)
 
 Haxe code that creates navigable listings of S3 buckets. View a production bucket [here](https://s3.amazonaws.com/geometrize-installer-bucket/index.html), or a minimal unstyled example bucket [here](https://s3.amazonaws.com/minimal-example-bucket/index.html).
 
