@@ -1,4 +1,4 @@
-package;
+package util;
 
 /**
  * Utility functions

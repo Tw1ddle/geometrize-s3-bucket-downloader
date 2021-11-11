@@ -1,4 +1,4 @@
-package;
+package util;
 
 import haxe.Http;
 import haxe.io.Path;

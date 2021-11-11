@@ -1,4 +1,4 @@
-package;
+package util;
 
 // Externs for sortable.js, a drop-in script to make tables sortable (https://github.com/HubSpot/sortable)
 @:native("Sortable")

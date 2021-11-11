@@ -1,0 +1,103 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Demo-Dataslinger-Chrome",
+            "request": "launch",
+            "type": "pwa-chrome",
+            "url": "http://localhost:8080",
+            "file": "${workspaceFolder}/bin/dataslinger_example/index.html"
+        },
+        {
+            "name": "Demo-Dataslinger-Edge",
+            "request": "launch",
+            "type": "pwa-msedge",
+            "url": "http://localhost:8081",
+            "file": "${workspaceFolder}/bin/dataslinger_example/index.html"
+        },
+        {
+            "name": "Demo-Dataslinger-Firefox",
+            "request": "launch",
+            "type": "firefox",
+            "reAttach": false,
+            "url": "http://localhost:8082",
+            "file": "${workspaceFolder}/bin/dataslinger_example/index.html"
+        },
+        {
+            "name": "Demo-Geometrize-Installer-Chrome",
+            "request": "launch",
+            "type": "pwa-chrome",
+            "url": "http://localhost:8080",
+            "file": "${workspaceFolder}/bin/geometrize_installer/index.html"
+        },
+        {
+            "name": "Demo-Geometrize-Installer-Edge",
+            "request": "launch",
+            "type": "pwa-msedge",
+            "url": "http://localhost:8081",
+            "file": "${workspaceFolder}/bin/geometrize_installer/index.html"
+        },
+        {
+            "name": "Demo-Geometrize-Installer-Firefox",
+            "request": "launch",
+            "type": "firefox",
+            "reAttach": false,
+            "url": "http://localhost:8082",
+            "file": "${workspaceFolder}/bin/geometrize_installer/index.html"
+        },
+        {
+            "name": "Demo-Geometrize-Lib-Example-Chrome",
+            "request": "launch",
+            "type": "pwa-chrome",
+            "url": "http://localhost:8080",
+            "file": "${workspaceFolder}/bin/geometrize_lib_example/index.html"
+        },
+        {
+            "name": "Demo-Geometrize-Lib-Example-Edge",
+            "request": "launch",
+            "type": "pwa-msedge",
+            "url": "http://localhost:8081",
+            "file": "${workspaceFolder}/bin/geometrize_lib_example/index.html"
+        },
+        {
+            "name": "Demo-Geometrize-Lib-Example-Firefox",
+            "request": "launch",
+            "type": "firefox",
+            "reAttach": false,
+            "url": "http://localhost:8082",
+            "file": "${workspaceFolder}/bin/geometrize_lib_example/index.html"
+        },
+        {
+            "name": "Demo-Minimal-Example-Chrome",
+            "request": "launch",
+            "type": "pwa-chrome",
+            "url": "http://localhost:8080",
+            "file": "${workspaceFolder}/bin/minimal_example/index.html"
+        },
+        {
+            "name": "Demo-Minimal-Example-Edge",
+            "request": "launch",
+            "type": "pwa-msedge",
+            "url": "http://localhost:8081",
+            "file": "${workspaceFolder}/bin/minimal_example/index.html"
+        },
+        {
+            "name": "Demo-Minimal-Example-Firefox",
+            "request": "launch",
+            "type": "firefox",
+            "reAttach": false,
+            "url": "http://localhost:8082",
+            "file": "${workspaceFolder}/bin/minimal_example/index.html"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Build-And-Run-Demo",
+            "configurations": ["Demo-Geometrize-Installer-Chrome"],
+            "preLaunchTask": "haxe: active configuration"
+        }
+    ]
+}
