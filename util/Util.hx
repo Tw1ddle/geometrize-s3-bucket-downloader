@@ -2,7 +2,7 @@ package util;
 
 /**
  * Utility functions
- * @author Sam Twidale (http://www.geometrize.co.uk/)
+ * @author Sam Twidale (https://www.geometrize.co.uk/)
  */
 class Util {
 	/**

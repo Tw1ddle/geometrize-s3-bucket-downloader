@@ -2,7 +2,7 @@ package util;
 
 /**
  * Represents info relating to a listing of a "directory" within an S3 bucket
- * @author Sam Twidale (http://www.geometrize.co.uk/)
+ * @author Sam Twidale (https://www.geometrize.co.uk/)
  */
 class DirectoryInfo {
 	public function new(prefix:String, files:Array<S3File>, directories:Array<S3Directory>) {

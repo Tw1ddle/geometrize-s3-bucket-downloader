@@ -2,7 +2,7 @@ package util;
 
 /**
  * Bucket/bucket listing config/preferences
- * @author Sam Twidale (http://www.geometrize.co.uk/)
+ * @author Sam Twidale (https://www.geometrize.co.uk/)
  */
 class BucketConfig {
 	public function new(bucketUrl:String, excludeFiles:Array<String>, excludeDirectories:Array<String>) {

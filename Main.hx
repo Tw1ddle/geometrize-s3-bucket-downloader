@@ -27,7 +27,7 @@ class ID {}
 
 /**
  * Code that creates nice directory listings/download pages for Amazon S3 buckets - compiling to only JavaScript and HTML.
- * @author Sam Twidale (http://www.geometrize.co.uk/)
+ * @author Sam Twidale (https://www.geometrize.co.uk/)
  */
 class Main {
 	// References to the HTML page elements

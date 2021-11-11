@@ -1,7 +1,7 @@
 The MIT License (MIT)
 
 s3-bucket-listing is copyright (c) 2012-2016 Rufus Pollock (https://github.com/rufuspollock/s3-bucket-listing)
-geometrize-s3-bucket-downloader, which started as a Haxe port of s3-bucket-listing, is copyright (c) 2017 Sam Twidale (http://samcodes.co.uk/)
+geometrize-s3-bucket-downloader, which started as a Haxe port of s3-bucket-listing, is copyright (c) 2021 Sam Twidale (https://samcodes.co.uk/)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
