@@ -5,6 +5,7 @@ branches:
 image:
   - Ubuntu2004
 
+environment:
   global:
     HAXELIB_ROOT: /home/appveyor/haxelib
     HAXE_INSTALLDIR: /home/appveyor/haxe
