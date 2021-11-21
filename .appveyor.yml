@@ -27,10 +27,10 @@ build_script:
   - cd $APPVEYOR_BUILD_FOLDER
   
   # Build the pages
-  - haxe s3_bucket_downloader.hxml dataslinger_example.hxml
-  - haxe s3_bucket_downloader.hxml geometrize_installer.hxml
-  - haxe s3_bucket_downloader.hxml geometrize_lib_example.hxml
-  - haxe s3_bucket_downloader.hxml minimal_example.hxml
+  - haxe dataslinger_example.hxml
+  - haxe geometrize_installer.hxml
+  - haxe geometrize_lib_example.hxml
+  - haxe minimal_example.hxml
 
 # Deploy the generated pages to the S3 buckets
 #deploy:

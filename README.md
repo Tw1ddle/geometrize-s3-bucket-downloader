@@ -14,10 +14,10 @@ The generated Javascript requests bucket listings using the Amazon GET Bucket (L
 Open the project folder in VSCode, or build the desired project from the command line:
 
 ```
-haxe s3_bucket_downloader.hxml dataslinger_example.hxml
-haxe s3_bucket_downloader.hxml geometrize_installer.hxml
-haxe s3_bucket_downloader.hxml geometrize_lib_example.hxml
-haxe s3_bucket_downloader.hxml minimal_example.hxml
+haxe dataslinger_example.hxml
+haxe geometrize_installer.hxml
+haxe geometrize_lib_example.hxml
+haxe minimal_example.hxml
 ```
 
 ## Screenshots

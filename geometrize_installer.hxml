@@ -1,3 +1,14 @@
+-main Main
+
+# Enable full dead code elimination
+-dce full
+
+# Minify the generated js
+-lib closure
+
+# Turn on advanced compilation
+# -D closure_advanced
+
 -D geometrize_installer
 
 -js bin/geometrize_installer/s3-bucket-downloader.js

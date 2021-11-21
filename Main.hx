@@ -6,6 +6,11 @@ import js.Browser;
 import js.html.ButtonElement;
 import js.html.DivElement;
 import js.html.URL;
+import util.DirectoryInfo;
+import util.BucketConfig;
+import util.BucketListing;
+import util.S3File;
+import util.S3Directory;
 
 using StringTools;
 
