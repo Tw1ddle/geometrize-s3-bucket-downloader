@@ -10,6 +10,16 @@ Made for providing access to installers for [Geometrize](https://www.geometrize.
 ## How It Works
 The generated Javascript requests bucket listings using the Amazon GET Bucket (List Objects) Version 2 API operation, parses the XML response to get a list of browsable files and directories, and simulates a file browser via a table on a webpage.
 
+## Build
+Open the project folder in VSCode, or build the desired project from the command line:
+
+```
+haxe s3_bucket_downloader.hxml dataslinger_example.hxml
+haxe s3_bucket_downloader.hxml geometrize_installer.hxml
+haxe s3_bucket_downloader.hxml geometrize_lib_example.hxml
+haxe s3_bucket_downloader.hxml minimal_example.hxml
+```
+
 ## Screenshots
 
 Styled production example:
