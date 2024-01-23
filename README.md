@@ -1,11 +1,8 @@
 # S3 Bucket Browser
 
 [![License](https://img.shields.io/:license-mit-blue.svg?style=flat-square)](https://github.com/Tw1ddle/geometrize-s3-bucket-downloader/blob/master/LICENSE)
-[![Geometrize S3 Bucket Build Status](https://ci.appveyor.com/api/projects/status/github/Tw1ddle/geometrize-s3-bucket-downloader)](https://ci.appveyor.com/project/Tw1ddle/geometrize-s3-bucket-downloader)
 
-Haxe code that creates navigable listings of S3 buckets. View a production bucket [here](https://s3.amazonaws.com/geometrize-installer-bucket/index.html), or a minimal unstyled example bucket [here](https://s3.amazonaws.com/minimal-example-bucket/index.html).
-
-Made for providing access to installers for [Geometrize](https://www.geometrize.co.uk/), an app for recreating images with geometric primitives.
+Haxe code that creates navigable listings of S3 buckets. I am no longering maintain this. I used it for hosting installers for [Geometrize](https://www.geometrize.co.uk/), an app for recreating images with geometric primitives, but now I upload builds directly to GitHub instead.
 
 ## How It Works
 The generated Javascript requests bucket listings using the Amazon GET Bucket (List Objects) Version 2 API operation, parses the XML response to get a list of browsable files and directories, and simulates a file browser via a table on a webpage.
