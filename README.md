@@ -21,11 +21,11 @@ haxe minimal_example.hxml
 
 Styled production example:
 
-[![Styled S3 downloader example for Geometrize](https://github.com/Tw1ddle/geometrize-s3-bucket-downloader/blob/master/screenshots/s3_downloader_styled_for_geometrize.png?raw=true "Styled S3 downloader example for Geometrize")]
+![Styled S3 downloader example for Geometrize](https://github.com/Tw1ddle/geometrize-s3-bucket-downloader/blob/master/screenshots/s3_downloader_styled_for_geometrize.png?raw=true "Styled S3 downloader example for Geometrize")
 
 Minimal unstyled example:
 
-[![Minimal unstyled S3 downloader example](https://github.com/Tw1ddle/geometrize-s3-bucket-downloader/blob/master/screenshots/s3_downloader_unstyled.png?raw=true "Minimal unstyled S3 downloader example")]
+![Minimal unstyled S3 downloader example](https://github.com/Tw1ddle/geometrize-s3-bucket-downloader/blob/master/screenshots/s3_downloader_unstyled.png?raw=true "Minimal unstyled S3 downloader example")
 
 ## Notes
  * Got an idea or suggestion? Open an issue on GitHub, or send Sam a message on [Twitter](https://twitter.com/Sam_Twidale).
